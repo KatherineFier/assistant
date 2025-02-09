@@ -1,5 +1,6 @@
 from openai import OpenAI
 import time
+import random
 client= OpenAI()
 
 def process_run(thread_id, assistant_id):
@@ -8,8 +9,11 @@ def process_run(thread_id, assistant_id):
     assistant_id = assistant_id
 )
 
+    phrases = ["Thinking", "Pondering", "Dotting the i's", "Achieving world peace"]
+
     while True:
         time.sleep(1)
+        print(random.choice(phrases) + "...")
         run_check = client.beta.threads.runs.retrieve(
             thread_id=thread_id,
             run_id=new_run.id
@@ -28,7 +32,13 @@ assistant = client.beta.assistants.create(
 thread = client.beta.threads.create()
 
 while True:
-    user_input = input("You: ")
+    thread_messages = client.beta.threads.messages.list(
+        thread_id=thread.id
+    )
+
+    if not thread_messages.data:
+        user_input = input("Hi! What is your name? You can type exit to end this chat. You: ")
+    else: user_input = input("You: ")
 
     if user_input.lower() == "exit":
         exit()
