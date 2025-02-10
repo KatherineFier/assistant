@@ -1,6 +1,12 @@
 from openai import OpenAI
 import time
+import logging
+import datetime
 import random
+
+log = logging.getLogger("assistant")
+logging.basicConfig(filename = "assistant.log", level = logging.INFO)
+
 client= OpenAI()
 
 def process_run(thread_id, assistant_id):
@@ -9,7 +15,7 @@ def process_run(thread_id, assistant_id):
     assistant_id = assistant_id
 )
 
-    phrases = ["Thinking", "Pondering", "Dotting the i's", "Achieving world peace"]
+    phrases = ["Thinking", "Pondering", "Dotting the i's"]
 
     while True:
         time.sleep(1)
@@ -21,24 +27,31 @@ def process_run(thread_id, assistant_id):
         if run_check.status in ["cancelled", "failed", "completed", "expired"]:
             return run_check
 
+def log_run(run_status):
+    if run_status in ["cancelled", "failed", "expired"]:
+        log.error(str(datetime.datetime.now()) + "Run" + run_status + "\n")
+
+
 
 assistant = client.beta.assistants.create(
-    name = "Study Buddy",
+    name = "Social Media Assistant",
     model = "gpt-3.5-turbo",
-    instructions = "You are a study partner for students who are newer to technology. When you answer prompts, do so with simple language suitable for someone learning fundamental concepts.",
+    instructions = """You are a social media and copywriting expert. You know how to keep the tone authentic to the Boulder Flower Farm brand.
+    You can find our website at BoulderFlowerFarm.com to get a sense of our tone and instagram page at Instagram.com/BoulderFLowerFarm. We values the outdoors
+    and bringing more nature and beauty in the world. That said we don't like fluff in our writing. We are direct, down to earth, and positive.
+    You know everything there is to know about growing flowers.""",
     tools=[]
 )
 
-thread = client.beta.threads.create()
+thread = client.beta.threads.create ()
+
+user_input = ""
 
 while True:
-    thread_messages = client.beta.threads.messages.list(
-        thread_id=thread.id
-    )
-
-    if not thread_messages.data:
-        user_input = input("Hi! What is your name? You can type exit to end this chat. You: ")
-    else: user_input = input("You: ")
+    if (user_input == ""):
+        user_input = input("Hi! I'm your social media assistant. How can I help you today? You can type exit to end this chat. You: ")
+    else:
+        user_input = input("You: ")
 
     if user_input.lower() == "exit":
         exit()
