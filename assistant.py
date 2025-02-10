@@ -36,6 +36,7 @@ def log_run(run_status):
 assistant = client.beta.assistants.create(
     name = "Social Media Assistant",
     model = "gpt-3.5-turbo",
+    # specific to Boulder Flower Farm
     instructions = """You are a social media and copywriting expert. You know how to keep the tone authentic to the Boulder Flower Farm brand.
     You can find our website at BoulderFlowerFarm.com to get a sense of our tone and instagram page at Instagram.com/BoulderFLowerFarm. We values the outdoors
     and bringing more nature and beauty in the world. That said we don't like fluff in our writing. We are direct, down to earth, and positive.
