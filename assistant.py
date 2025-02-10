@@ -9,6 +9,13 @@ logging.basicConfig(filename = "assistant.log", level = logging.INFO)
 
 client= OpenAI()
 
+# After uploading the file to the OpenAI platform, this block of code and print statement can be removed and the code below can be uncommented.
+# flower_knowledge = client.files.create(
+#     file=open("knowledge/BFF_Flower_Facts_2025_v1.pdf", "rb"),
+#     purpose="assistants"
+# )
+# print(flower_knowledge)
+
 def process_run(thread_id, assistant_id):
     new_run = client.beta.threads.runs.create(
     thread_id=thread_id,
@@ -41,7 +48,9 @@ assistant = client.beta.assistants.create(
     You can find our website at BoulderFlowerFarm.com to get a sense of our tone and instagram page at Instagram.com/BoulderFLowerFarm. We values the outdoors
     and bringing more nature and beauty in the world. That said we don't like fluff in our writing. We are direct, down to earth, and positive.
     You know everything there is to know about growing flowers.""",
-    tools=[]
+    tools=[{
+        "type": "file_search"
+    }]
 )
 
 thread = client.beta.threads.create ()
